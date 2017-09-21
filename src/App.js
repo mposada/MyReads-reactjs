@@ -10,7 +10,8 @@ class BooksApp extends React.Component {
         super(props);
 
         this.state = {
-            books: []
+            books: [],
+            isLoading: false
         };
     }
 
@@ -18,13 +19,44 @@ class BooksApp extends React.Component {
         BooksAPI.getAll().then(books => this.setState({ books }));
     }
 
+    _updateBookShelp(book, shelf) {
+        this.setState({ isLoading: true });
+
+        BooksAPI.update(book, shelf).then(response => {
+            console.log(response.currentlyReading);
+
+            const books = this.state.books.filter(item => {
+                if (item.id === book.id) {
+                    console.log(item.title);
+                    console.log(item.shelf + " => " + shelf);
+                    item.shelf = shelf;
+                }
+
+                return book;
+            });
+
+            this.setState({ books, isLoading: false });
+        });
+    }
+
     render() {
         return (
             <div className="app">
+                {this.state.isLoading && (
+                    <div className="list-books-loader">
+                        <div className="loader" />
+                    </div>
+                )}
+
                 <Route
                     exact
                     path="/"
-                    render={() => <BookList books={this.state.books} />}
+                    render={() => (
+                        <BookList
+                            onUpdateBook={this._updateBookShelp.bind(this)}
+                            books={this.state.books}
+                        />
+                    )}
                 />
                 <Route path="/search" component={SearchBook} />
             </div>

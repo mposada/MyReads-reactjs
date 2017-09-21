@@ -10,7 +10,11 @@ class BookSection extends Component {
                     <div className="bookshelf-books">
                         <ol className="books-grid">
                             {this.props.books.map(book => (
-                                <Book key={book.id} book={book} />
+                                <Book
+                                    key={book.id}
+                                    book={book}
+                                    onUpdateBook={this.props.onUpdateBook}
+                                />
                             ))}
                         </ol>
                     </div>

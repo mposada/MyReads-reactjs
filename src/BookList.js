@@ -4,7 +4,7 @@ import BookSection from "./BookSection";
 
 class BookList extends Component {
     render() {
-        const booksSections = this.props.books
+        const booksShelf = this.props.books
             .map(book =>
                 book.shelf
                     .split(/(?=[A-Z])/)
@@ -15,27 +15,33 @@ class BookList extends Component {
                 (shelf, index, inputArray) => inputArray.indexOf(shelf) == index
             );
 
-        const booksSectionsKeys = this.props.books
+        const bookShelfKey = this.props.books
             .map(book => book.shelf)
             .filter(
                 (shelf, index, inputArray) => inputArray.indexOf(shelf) == index
             );
-
-        console.log(booksSectionsKeys);
 
         return (
             <div className="list-books">
                 <div className="list-books-title">
                     <h1>MyReads</h1>
                 </div>
+
+                {this.props.books.length === 0 && (
+                    <div className="list-books-loader">
+                        <div className="loader" />
+                    </div>
+                )}
+
                 <div className="list-books-content">
-                    {booksSections.map((section, index) => (
+                    {booksShelf.map((shelf, index) => (
                         <BookSection
-                            key={booksSectionsKeys[index]}
-                            name={section}
+                            key={bookShelfKey[index]}
+                            name={shelf}
                             books={this.props.books.filter(
-                                book => book.shelf == booksSectionsKeys[index]
+                                book => book.shelf == bookShelfKey[index]
                             )}
+                            onUpdateBook={this.props.onUpdateBook}
                         />
                     ))}
                 </div>
