@@ -5,15 +5,17 @@ class Book extends Component {
         super(props);
 
         this.state = {
-            shelf: ""
+            shelf: "none"
         };
     }
 
     componentDidMount() {
         // is this ok ?
-        this.setState({
-            shelf: this.props.book.shelf
-        });
+        if (this.props.book.shelf != null) {
+            this.setState({
+                shelf: this.props.book.shelf
+            });
+        }
     }
 
     _changeBookShelf(event) {
@@ -23,8 +25,20 @@ class Book extends Component {
     }
 
     render() {
-        const image = this.props.book.imageLinks.thumbnail;
-        const backgroundImage = `url("${image}")`;
+        let image;
+        let backgroundImage;
+        if (this.props.book.imageLinks != null) {
+            image = this.props.book.imageLinks.thumbnail;
+            backgroundImage = `url("${image}")`;
+        } else {
+            backgroundImage =
+                'url("http://books.google.com/books/content?id=yDtCuFHXbAYC&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE72RRiTR6U5OUg3IY_LpHTL2NztVWAuZYNFE8dUuC0VlYabeyegLzpAnDPeWxE6RHi0C2ehrR9Gv20LH2dtjpbcUcs8YnH5VCCAH0Y2ICaKOTvrZTCObQbsfp4UbDqQyGISCZfGN&source=gbs_api")';
+        }
+
+        let author = "No Author";
+        if (this.props.book.authors != null) {
+            author = this.props.book.authors[0];
+        }
 
         return (
             <li>
@@ -56,9 +70,7 @@ class Book extends Component {
                         </div>
                     </div>
                     <div className="book-title">{this.props.book.title}</div>
-                    <div className="book-authors">
-                        {this.props.book.authors[0]}
-                    </div>
+                    <div className="book-authors">{author}</div>
                 </div>
             </li>
         );

@@ -12,13 +12,15 @@ class BookList extends Component {
                     .join(" ")
             )
             .filter(
-                (shelf, index, inputArray) => inputArray.indexOf(shelf) == index
+                (shelf, index, inputArray) =>
+                    inputArray.indexOf(shelf) === index
             );
 
         const bookShelfKey = this.props.books
             .map(book => book.shelf)
             .filter(
-                (shelf, index, inputArray) => inputArray.indexOf(shelf) == index
+                (shelf, index, inputArray) =>
+                    inputArray.indexOf(shelf) === index
             );
 
         return (
@@ -39,7 +41,7 @@ class BookList extends Component {
                             key={bookShelfKey[index]}
                             name={shelf}
                             books={this.props.books.filter(
-                                book => book.shelf == bookShelfKey[index]
+                                book => book.shelf === bookShelfKey[index]
                             )}
                             onUpdateBook={this.props.onUpdateBook}
                         />

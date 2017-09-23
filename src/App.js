@@ -4,6 +4,7 @@ import * as BooksAPI from "./utils/BooksAPI";
 import "./App.css";
 import SearchBook from "./SearchBook";
 import BookList from "./BookList";
+import Loading from "./Loading";
 
 class BooksApp extends React.Component {
     constructor(props) {
@@ -16,49 +17,68 @@ class BooksApp extends React.Component {
     }
 
     componentDidMount() {
-        BooksAPI.getAll().then(books => this.setState({ books }));
+        BooksAPI.getAll().then(books => {
+            this.setState({ books });
+        });
     }
 
     _updateBookShelp(book, shelf) {
         this.setState({ isLoading: true });
 
         BooksAPI.update(book, shelf).then(response => {
-            console.log(response.currentlyReading);
+            // check if the book exists in the current state
+            const bookExists = this.state.books.find(
+                item => item.id === book.id
+            );
+            // if exists lets add the new shelf if not concat tp the current state
+            if (bookExists !== undefined) {
+                const books = this.state.books.filter(item => {
+                    if (item.id === book.id) {
+                        item.shelf = shelf;
 
-            const books = this.state.books.filter(item => {
-                if (item.id === book.id) {
-                    console.log(item.title);
-                    console.log(item.shelf + " => " + shelf);
-                    item.shelf = shelf;
-                }
+                        if (shelf === "none") {
+                            return;
+                        }
+                    }
 
-                return book;
-            });
+                    return book;
+                });
 
-            this.setState({ books, isLoading: false });
+                this.setState({ books, isLoading: false });
+            } else {
+                book.shelf = shelf;
+                this.setState({
+                    books: this.state.books.concat(book),
+                    isLoading: false
+                });
+            }
         });
     }
 
     render() {
         return (
             <div className="app">
-                {this.state.isLoading && (
-                    <div className="list-books-loader">
-                        <div className="loader" />
-                    </div>
-                )}
+                {this.state.isLoading && <Loading />}
 
                 <Route
                     exact
                     path="/"
                     render={() => (
                         <BookList
-                            onUpdateBook={this._updateBookShelp.bind(this)}
                             books={this.state.books}
+                            onUpdateBook={this._updateBookShelp.bind(this)}
                         />
                     )}
                 />
-                <Route path="/search" component={SearchBook} />
+                <Route
+                    path="/search"
+                    render={() => (
+                        <SearchBook
+                            books={this.state.books}
+                            onUpdateBook={this._updateBookShelp.bind(this)}
+                        />
+                    )}
+                />
             </div>
         );
     }
