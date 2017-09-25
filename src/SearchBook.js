@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import * as BooksAPI from "./utils/BooksAPI";
+import { debounce } from "throttle-debounce";
 import Book from "./Book";
 import Loading from "./Loading";
 
@@ -13,10 +14,16 @@ class SearchBook extends Component {
             booksResult: [],
             isLoading: false
         };
+
+        this._ajaxRequest = debounce(500, this._ajaxRequest);
     }
 
-    _searchBooks(searchValue) {
-        this.setState({ searchValue: searchValue.trim(), isLoading: true });
+    _searchBooks(event) {
+        this.setState({ searchValue: event.target.value, isLoading: true });
+        this._ajaxRequest(event.target.value);
+    }
+
+    _ajaxRequest(searchValue) {
         if (searchValue.length > 0) {
             BooksAPI.search(searchValue)
                 .then(response => {
@@ -75,8 +82,7 @@ class SearchBook extends Component {
                             type="text"
                             placeholder="Search by title or author"
                             value={this.state.searchValue}
-                            onChange={event =>
-                                this._searchBooks(event.target.value)}
+                            onChange={event => this._searchBooks(event)}
                         />
                     </div>
                 </div>

@@ -22,7 +22,7 @@ class BooksApp extends React.Component {
         });
     }
 
-    _updateBookShelp(book, shelf) {
+    _updateBookShelf(book, shelf) {
         this.setState({ isLoading: true });
 
         BooksAPI.update(book, shelf).then(response => {
@@ -30,18 +30,18 @@ class BooksApp extends React.Component {
             const bookExists = this.state.books.find(
                 item => item.id === book.id
             );
-            // if exists lets add the new shelf if not concat tp the current state
+            // if exists lets add the new shelf if not concat to the current state
             if (bookExists !== undefined) {
                 const books = this.state.books.filter(item => {
                     if (item.id === book.id) {
                         item.shelf = shelf;
 
                         if (shelf === "none") {
-                            return;
+                            return false;
                         }
                     }
 
-                    return book;
+                    return true;
                 });
 
                 this.setState({ books, isLoading: false });
@@ -66,7 +66,7 @@ class BooksApp extends React.Component {
                     render={() => (
                         <BookList
                             books={this.state.books}
-                            onUpdateBook={this._updateBookShelp.bind(this)}
+                            onUpdateBook={this._updateBookShelf.bind(this)}
                         />
                     )}
                 />
@@ -75,7 +75,7 @@ class BooksApp extends React.Component {
                     render={() => (
                         <SearchBook
                             books={this.state.books}
-                            onUpdateBook={this._updateBookShelp.bind(this)}
+                            onUpdateBook={this._updateBookShelf.bind(this)}
                         />
                     )}
                 />

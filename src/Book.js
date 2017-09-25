@@ -1,23 +1,6 @@
 import React, { Component } from "react";
 
 class Book extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            shelf: "none"
-        };
-    }
-
-    componentDidMount() {
-        // is this ok ?
-        if (this.props.book.shelf != null) {
-            this.setState({
-                shelf: this.props.book.shelf
-            });
-        }
-    }
-
     _changeBookShelf(event) {
         const shelf = event.target.value;
         const book = this.props.book;
@@ -27,6 +10,7 @@ class Book extends Component {
     render() {
         let image;
         let backgroundImage;
+
         if (this.props.book.imageLinks != null) {
             image = this.props.book.imageLinks.thumbnail;
             backgroundImage = `url("${image}")`;
@@ -37,7 +21,14 @@ class Book extends Component {
 
         let author = "No Author";
         if (this.props.book.authors != null) {
-            author = this.props.book.authors[0];
+            author = this.props.book.authors.join(", ");
+        }
+
+        let shelf;
+        if (this.props.book.shelf != null) {
+            shelf = this.props.book.shelf;
+        } else {
+            shelf = "none";
         }
 
         return (
@@ -54,7 +45,7 @@ class Book extends Component {
                         />
                         <div className="book-shelf-changer">
                             <select
-                                value={this.state.shelf}
+                                value={shelf}
                                 onChange={this._changeBookShelf.bind(this)}
                             >
                                 <option value="none" disabled>
